@@ -1,0 +1,446 @@
+@import url('https://fonts.googleapis.com/css2?family=Söhne:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light mode - Clean white/gray */
+    --background: 210 20% 98%;
+    --foreground: 210 33% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 33% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 33% 12%;
+
+    /* GitHub-style blue primary */
+    --primary: 212 85% 52%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 214 32% 95%;
+    --secondary-foreground: 210 33% 12%;
+
+    --muted: 214 32% 93%;
+    --muted-foreground: 210 15% 40%;
+
+    /* Orange accent */
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 90%;
+    --input: 214 32% 90%;
+    --ring: 212 85% 52%;
+
+    --radius: 0.5rem;
+
+    /* Chart colors: Blue / Teal / Violet / Orange spectrum */
+    --chart-1: 212 85% 48%;
+    --chart-2: 173 80% 35%;
+    --chart-3: 262 83% 50%;
+    --chart-4: 25 95% 50%;
+    --chart-5: 199 89% 40%;
+    --chart-6: 280 65% 55%;
+    --chart-7: 160 84% 35%;
+    --chart-8: 234 89% 55%;
+
+    /* Design tokens */
+    --linear-border: 214 32% 88%;
+    --linear-hover: 214 32% 96%;
+    --linear-active: 212 85% 52%;
+
+    /* Status colors */
+    --success: 160 84% 35%;
+    --warning: 38 92% 50%;
+    --info: 212 85% 52%;
+
+    /* Gradients - light mode */
+    --gradient-primary: linear-gradient(135deg, hsl(212 85% 52%) 0%, hsl(262 83% 50%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(210 20% 98%) 0%, hsl(214 32% 97%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.95) 0%, hsl(214 32% 97% / 0.8) 100%);
+    --gradient-hero: radial-gradient(ellipse at 50% 0%, hsl(212 85% 52% / 0.08) 0%, transparent 60%);
+    --gradient-accent: linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(25 90% 60%) 100%);
+
+    /* Shadows - light mode */
+    --shadow-xs: 0 1px 2px hsl(210 33% 12% / 0.04);
+    --shadow-sm: 0 1px 3px hsl(210 33% 12% / 0.06);
+    --shadow-md: 0 4px 6px -1px hsl(210 33% 12% / 0.08);
+    --shadow-lg: 0 10px 15px -3px hsl(210 33% 12% / 0.08);
+    --shadow-card: 0 1px 3px hsl(210 33% 12% / 0.05);
+    --shadow-button: 0 1px 2px hsl(210 33% 12% / 0.05);
+    --shadow-glow: 0 0 0 1px hsl(212 85% 52% / 0.1);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 210 33% 12%;
+    --sidebar-primary: 212 85% 52%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 214 32% 95%;
+    --sidebar-accent-foreground: 210 33% 12%;
+    --sidebar-border: 214 32% 90%;
+    --sidebar-ring: 212 85% 52%;
+  }
+
+  .dark {
+    /* Deep dark background - #0A0F14 */
+    --background: 210 33% 6%;
+    --foreground: 215 20% 85%;
+
+    --card: 210 28% 9%;
+    --card-foreground: 215 20% 85%;
+
+    --popover: 210 28% 9%;
+    --popover-foreground: 215 20% 85%;
+
+    /* GitHub-style blue primary - #1F6FEB */
+    --primary: 212 85% 52%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 25% 13%;
+    --secondary-foreground: 215 20% 85%;
+
+    --muted: 210 22% 16%;
+    --muted-foreground: 215 15% 55%;
+
+    /* Orange accent - #F97316 */
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 215 20% 85%;
+
+    /* Border - #1F2933 */
+    --border: 210 20% 18%;
+    --input: 210 20% 18%;
+    --ring: 212 85% 52%;
+
+    /* Chart colors: Blue / Teal / Violet / Orange spectrum */
+    --chart-1: 212 85% 52%;
+    --chart-2: 173 80% 40%;
+    --chart-3: 262 83% 58%;
+    --chart-4: 25 95% 53%;
+    --chart-5: 199 89% 48%;
+    --chart-6: 280 65% 60%;
+    --chart-7: 160 84% 39%;
+    --chart-8: 234 89% 60%;
+
+    /* Design tokens - dark */
+    --linear-border: 210 20% 20%;
+    --linear-hover: 210 25% 13%;
+    --linear-active: 212 85% 52%;
+
+    /* Status colors */
+    --success: 160 84% 39%;
+    --warning: 38 90% 55%;
+    --info: 212 85% 52%;
+
+    /* Dark mode gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(212 85% 52%) 0%, hsl(262 83% 58%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(210 33% 6%) 0%, hsl(210 28% 8%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(210 28% 12% / 0.8) 0%, hsl(210 28% 9% / 0.6) 100%);
+    --gradient-hero: radial-gradient(ellipse at 50% 0%, hsl(212 85% 52% / 0.12) 0%, transparent 60%);
+    --gradient-accent: linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(25 90% 58%) 100%);
+
+    /* Dark shadows */
+    --shadow-xs: 0 1px 2px hsl(0 0% 0% / 0.2);
+    --shadow-sm: 0 1px 3px hsl(0 0% 0% / 0.3);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.4);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.4);
+    --shadow-card: 0 1px 3px hsl(0 0% 0% / 0.25);
+    --shadow-button: 0 1px 2px hsl(0 0% 0% / 0.2);
+    --shadow-glow: 0 0 0 1px hsl(212 85% 52% / 0.2);
+
+    --sidebar-background: 210 33% 6%;
+    --sidebar-foreground: 215 20% 85%;
+    --sidebar-primary: 212 85% 52%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 25% 13%;
+    --sidebar-accent-foreground: 215 20% 85%;
+    --sidebar-border: 210 20% 18%;
+    --sidebar-ring: 212 85% 52%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  code, pre {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  /* Linear-inspired minimal card */
+  .linear-card {
+    @apply bg-card border border-border rounded-lg transition-all duration-150;
+    box-shadow: var(--shadow-card);
+  }
+
+  .linear-card:hover {
+    @apply border-primary/20;
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Legacy glass card - updated for new theme */
+  .glass-card {
+    @apply bg-card/90 backdrop-blur-sm border border-border rounded-lg;
+    box-shadow: var(--shadow-card);
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+  }
+
+  /* Linear-style sidebar item */
+  .linear-sidebar-item {
+    @apply flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted-foreground transition-colors duration-150;
+  }
+
+  .linear-sidebar-item:hover {
+    @apply bg-secondary text-foreground;
+  }
+
+  .linear-sidebar-item.active {
+    @apply bg-secondary text-foreground;
+  }
+
+  /* Tableau-style chart container */
+  .tableau-chart {
+    @apply bg-card border border-border rounded-lg p-4;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tableau-chart-header {
+    @apply flex items-center justify-between pb-3 mb-3 border-b border-border;
+  }
+
+  .tableau-chart-title {
+    @apply text-sm font-semibold text-foreground tracking-tight;
+  }
+
+  .tableau-legend {
+    @apply flex flex-wrap gap-3 mt-3 pt-3 border-t border-border;
+  }
+
+  .tableau-legend-item {
+    @apply flex items-center gap-2 text-xs text-muted-foreground;
+  }
+
+  /* Linear-style button */
+  .linear-button {
+    @apply inline-flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-150;
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+    box-shadow: var(--shadow-xs);
+  }
+
+  .linear-button-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+
+  /* Linear-style input */
+  .linear-input {
+    @apply w-full px-3 py-2 text-sm bg-background border border-border rounded-md transition-all duration-150;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary;
+  }
+
+  /* Linear-style tabs */
+  .linear-tabs {
+    @apply flex items-center gap-1 p-1 bg-secondary/50 rounded-lg;
+  }
+
+  .linear-tab {
+    @apply px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md transition-all duration-150;
+  }
+
+  .linear-tab:hover {
+    @apply text-foreground;
+  }
+
+  .linear-tab.active {
+    @apply bg-card text-foreground shadow-sm;
+  }
+
+  /* Stat card - updated for Linear style */
+  .stat-card {
+    @apply relative rounded-lg border border-border bg-card p-4 transition-all duration-150;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .stat-card:hover {
+    @apply border-primary/20;
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .shadow-button {
+    box-shadow: var(--shadow-button);
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out forwards;
+  }
+
+  .animate-slide-in-right {
+    animation: slide-in-right 0.2s ease-out forwards;
+  }
+
+  .bg-success {
+    background-color: hsl(var(--success));
+  }
+
+  .text-success {
+    color: hsl(var(--success));
+  }
+
+  .bg-warning {
+    background-color: hsl(var(--warning));
+  }
+
+  .text-warning {
+    color: hsl(var(--warning));
+  }
+
+  .bg-info {
+    background-color: hsl(var(--info));
+  }
+
+  .text-info {
+    color: hsl(var(--info));
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom scrollbar - Linear style */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Prevent iOS zoom on input focus */
+@media (max-width: 767px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Safe area padding for notched devices */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+/* Touch-friendly spacing */
+.touch-spacing > * {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Mobile tap highlight removal */
+@media (max-width: 767px) {
+  button, a, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Responsive text utilities */
+.text-responsive-sm {
+  @apply text-xs sm:text-sm;
+}
+
+.text-responsive-base {
+  @apply text-sm sm:text-base;
+}
+
+.text-responsive-lg {
+  @apply text-base sm:text-lg md:text-xl;
+}
+
+/* Mobile-friendly button sizes */
+@media (max-width: 767px) {
+  .btn-touch {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
