@@ -3,7 +3,10 @@
  * Connects frontend to the enhanced ML and AI backend services
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE || '';
+const API_BASE_URL =
+  (import.meta as any).env.REACT_APP_BACKEND_URL ||
+  (import.meta as any).env.VITE_API_BASE ||
+  '';
 
 interface APIResponse<T> {
   success: boolean;
