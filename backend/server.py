@@ -10,9 +10,9 @@ from typing import List, Dict, Any, Optional
 import uuid
 from datetime import datetime
 
-# Load environment variables
+# Load environment variables for backend services
 ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+load_dotenv(ROOT_DIR / ".env")
 
 # Import services
 from services.data_analysis_service import DataAnalysisService
@@ -20,13 +20,13 @@ from services.ml_models_service import MLModelsService
 from services.ai_insights_service import AIInsightsService
 from services.forecasting_service import ForecastingService
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL'].strip()
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME'].strip()]
+# MongoDB connection (used by routers; client is initialized on import)
+_mongodb_uri = os.environ.get("MONGODB_URI") or os.environ.get("MONGO_URL")
+if not _mongodb_uri:
+    raise RuntimeError("MONGODB_URI environment variable is not set")
 
-# Create the main app
-app = FastAPI(title="Data Analysis API", version="2.0.0")
+client = AsyncIOMotorClient(_mongodb_uri.strip())
+db = client[os.environ["DB_NAME"].strip()]
 
 # Create routers
 api_router = APIRouter(prefix="/api")
@@ -383,26 +383,12 @@ async def forecast_multiple(request: MultiForecastRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# ============== Include Routers ==============
+# ============== Shutdown Helper ==============
 
-app.include_router(api_router)
-app.include_router(analysis_router)
-app.include_router(ml_router)
-app.include_router(ai_router)
-app.include_router(forecast_router)
+async def shutdown_db_client() -> None:
+    """Close the shared MongoDB client.
 
-# ============== Middleware ==============
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=[origin.strip() for origin in os.environ.get('CORS_ORIGINS', '*').split(',')],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# ============== Shutdown Event ==============
-
-@app.on_event("shutdown")
-async def shutdown_db_client():
+    This is intended to be called from the main FastAPI application
+    on shutdown.
+    """
     client.close()
