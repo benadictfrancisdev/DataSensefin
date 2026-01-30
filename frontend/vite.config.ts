@@ -6,7 +6,9 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   build: {
-    outDir: 'build'
+    outDir: 'build',
+    // Increase chunk size warning limit to avoid build failures on Vercel
+    chunkSizeWarningLimit: 3000,
   },
   server: {
     port: 3000,
