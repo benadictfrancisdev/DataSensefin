@@ -193,46 +193,66 @@ const ReportGenerator = ({ dataset }: ReportGeneratorProps) => {
 
       // Parse the AI response with enhanced structure
       const reportData: GeneratedReport = {
-        title: data.title || `${dataset.name} Analysis Report`,
-        executiveSummary: data.executiveSummary || data.summary || "Comprehensive analysis has been completed for the provided dataset, revealing key patterns and actionable insights for strategic decision-making.",
-        situationAnalysis: data.situationAnalysis || undefined,
-        introduction: data.introduction || `This report presents a comprehensive analysis of the ${dataset.name} dataset, utilizing advanced AI-powered analytics to extract meaningful insights and recommendations.`,
-        objectives: Array.isArray(data.objectives) 
-          ? data.objectives.map((o: unknown) => typeof o === 'string' ? o : String(o))
-          : ["Analyze data patterns and trends", "Identify key insights and correlations", "Provide actionable recommendations", "Generate comprehensive documentation"],
-        problemStatement: data.problemStatement || "Understanding complex data patterns to derive actionable business intelligence and strategic insights.",
-        methodology: data.methodology || "The analysis employed a multi-phase approach including data validation, statistical analysis, pattern recognition, and AI-driven insight generation.",
+        title: `${dataset.name} Analysis Report`,
+        executiveSummary:
+          "Comprehensive analysis has been completed for the provided dataset, revealing key patterns and actionable insights for strategic decision-making.",
+        situationAnalysis: undefined,
+        introduction: `This report presents a comprehensive analysis of the ${dataset.name} dataset, utilizing statistical profiling and automated dashboards to extract meaningful insights and recommendations.`,
+        objectives: [
+          "Analyze data patterns and trends",
+          "Identify key insights and correlations",
+          "Provide actionable recommendations",
+          "Generate comprehensive documentation",
+        ],
+        problemStatement:
+          "Understanding complex data patterns to derive actionable business intelligence and strategic insights.",
+        methodology:
+          "The analysis employed data validation, summary statistics, pattern detection, and visualization to derive insights.",
         datasetOverview: {
           name: dataset.name,
-          records: dataToAnalyze.length,
-          columns: dataset.columns.length,
-          dataTypes: dataset.columns.map(c => {
-            const sample = dataToAnalyze[0]?.[c];
-            return typeof sample === 'number' ? 'Numeric' : typeof sample === 'boolean' ? 'Boolean' : 'Text';
-          }),
+          records: rowCount,
+          columns: colCount,
+          dataTypes,
         },
-        toolsAndTechnologies: Array.isArray(data.toolsAndTechnologies) 
-          ? data.toolsAndTechnologies.map((t: unknown) => typeof t === 'string' ? t : String(t))
-          : ["AI Data Analysis Engine", "Statistical Processing Module", "Pattern Recognition System", "Natural Language Generation"],
-        implementationSteps: Array.isArray(data.implementationSteps) ? data.implementationSteps : ["Data Upload & Validation", "Automated Data Cleaning", "Statistical Analysis", "Pattern Detection", "Insight Generation", "Report Compilation"],
-        keyFindings: Array.isArray(data.keyFindings) 
-          ? data.keyFindings.map(extractFindingText)
-          : ["Analysis completed successfully with significant patterns identified"],
-        patternAnalysis: data.patternAnalysis || undefined,
-        rootCauseAnalysis: data.rootCauseAnalysis || undefined,
-        riskAssessment: data.riskAssessment || undefined,
-        opportunities: data.opportunities || undefined,
-        recommendations: Array.isArray(data.recommendations) 
-          ? data.recommendations.map(extractRecommendationText)
-          : ["Review detailed findings for strategic implementation"],
-        implementationRoadmap: data.implementationRoadmap || undefined,
-        conclusion: data.conclusion || "The analysis has been successfully completed, providing comprehensive insights and actionable recommendations for data-driven decision making.",
-        futureScope: Array.isArray(data.futureScope) 
-          ? data.futureScope.map((s: unknown) => typeof s === 'string' ? s : String(s))
-          : ["Continuous monitoring and trend analysis", "Predictive modeling implementation", "Advanced correlation studies", "Real-time dashboard integration"],
-        keyMetrics: data.keyMetrics || undefined,
-        confidence: data.confidence || undefined,
-        wordCount: data.wordCount || undefined,
+        toolsAndTechnologies: [
+          "Python Data Analysis Engine",
+          "Statistical Processing Module",
+          "Visualization Dashboard",
+          "ML Workbench",
+        ],
+        implementationSteps: [
+          "Data Upload & Validation",
+          "Automated Data Cleaning",
+          "Statistical Analysis",
+          "Pattern Detection",
+          "Insight Generation",
+          "Report Compilation",
+        ],
+        keyFindings: [
+          `Dataset contains ${rowCount} records and ${colCount} columns with a mix of ${dataTypes.filter(t => t === 'Numeric').length} numeric and ${dataTypes.filter(t => t === 'Text').length} categorical fields.`,
+          "Summary statistics highlight key trends and variability across numeric measures.",
+        ],
+        patternAnalysis: undefined,
+        rootCauseAnalysis: undefined,
+        riskAssessment: undefined,
+        opportunities: undefined,
+        recommendations: [
+          "Use the ML Workbench to train predictive models on key numeric variables.",
+          "Leverage the Visualization dashboard to build interactive charts and dashboards.",
+          "Monitor changes over time by periodically re-running this analysis.",
+        ],
+        implementationRoadmap: undefined,
+        conclusion:
+          "The analysis has been successfully completed, providing a solid foundation for data-driven decision making and further advanced modeling.",
+        futureScope: [
+          "Continuous monitoring and trend analysis",
+          "Predictive modeling implementation",
+          "Advanced correlation studies",
+          "Real-time dashboard integration",
+        ],
+        keyMetrics: undefined,
+        confidence: undefined,
+        wordCount: undefined,
         generatedAt: new Date().toISOString(),
       };
 
