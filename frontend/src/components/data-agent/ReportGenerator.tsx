@@ -164,22 +164,19 @@ const ReportGenerator = ({ dataset }: ReportGeneratorProps) => {
         setGenerationProgress(prev => Math.min(prev + 10, 70));
       }, 500);
       
-      const { data, error } = await supabase.functions.invoke('data-agent', {
-        body: {
-          action: 'generate-report',
-          data: dataToAnalyze.slice(0, 200),
-          datasetName: dataset.name,
-          projectDetails,
-          projectGoals,
-          projectStatus,
-          columns: dataset.columns,
-        }
+      // Local-only report generation (no Supabase, no LLM)
+      const rowCount = dataToAnalyze.length;
+      const colCount = dataset.columns.length;
+      const sample = dataToAnalyze[0] || {};
+      const dataTypes = dataset.columns.map(c => {
+        const v = sample[c];
+        if (typeof v === 'number') return 'Numeric';
+        if (typeof v === 'boolean') return 'Boolean';
+        return 'Text';
       });
 
       clearInterval(progressInterval);
       setGenerationProgress(85);
-
-      if (error) throw error;
 
       // Helper to extract text from findings/recommendations
       const extractFindingText = (f: unknown): string => {
