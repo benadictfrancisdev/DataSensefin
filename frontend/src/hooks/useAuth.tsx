@@ -17,66 +17,60 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const signUp = async (email: string, password: string, displayName?: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
+  // MVP MODE: local-only auth (no Supabase).
+  // We treat any email/password combination as a valid local user.
+  const signUp = async (email: string, _password: string, displayName?: string) => {
+    const fakeUser = {
+      id: `local-${Date.now()}`,
       email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          display_name: displayName,
-        },
-      },
-    });
-    return { error };
+      user_metadata: { display_name: displayName },
+    } as unknown as User;
+
+    setUser(fakeUser);
+    setSession({
+      user: fakeUser,
+      access_token: "local-token",
+      token_type: "bearer",
+      expires_in: 3600,
+      refresh_token: "local-refresh",
+      provider_token: null,
+      provider_refresh_token: null,
+    } as unknown as Session);
+
+    return { error: null };
   };
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+  const signIn = async (email: string, _password: string) => {
+    const fakeUser = {
+      id: `local-${Date.now()}`,
       email,
-      password,
-    });
-    return { error };
+      user_metadata: { display_name: email.split("@")[0] },
+    } as unknown as User;
+
+    setUser(fakeUser);
+    setSession({
+      user: fakeUser,
+      access_token: "local-token",
+      token_type: "bearer",
+      expires_in: 3600,
+      refresh_token: "local-refresh",
+      provider_token: null,
+      provider_refresh_token: null,
+    } as unknown as Session);
+
+    return { error: null };
   };
 
-  const signInWithOAuth = async (provider: Provider) => {
-    const redirectUrl = `${window.location.origin}/data-agent`;
-    
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: redirectUrl,
-      },
-    });
-    return { error };
+  const signInWithOAuth = async (_provider: Provider) => {
+    // OAuth is disabled in MVP mode
+    return { error: new Error("OAuth sign-in is disabled in this MVP build.") };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    setUser(null);
+    setSession(null);
   };
 
   return (
