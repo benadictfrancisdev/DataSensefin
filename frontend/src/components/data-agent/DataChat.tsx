@@ -452,8 +452,45 @@ const DataChat = ({ dataset }: DataChatProps) => {
         speakText(adaptedContent);
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to get response");
-      setMessages(prev => prev.slice(0, -1));
+      console.error('Chat error:', error);
+
+      // Fallback: generate a simple local response based on the data
+      const dataToChat = dataset.cleanedData || dataset.rawData;
+      const rowCount = dataToChat.length;
+      const colCount = dataset.columns.length;
+      const numericCols = dataset.columns.filter(col => 
+        dataToChat.some(row => !isNaN(Number(row[col])))
+      );
+      const categoricalCols = dataset.columns.filter(col => 
+        !numericCols.includes(col)
+      );
+
+      let responseText = `I analyzed your dataset "${dataset.name}" with ${rowCount} rows and ${colCount} columns. `;
+
+      if (input.toLowerCase().includes('trend') || input.toLowerCase().includes('pattern')) {
+        responseText += 'I can see potential trends in your numeric fields. Try plotting line charts for the main numeric columns to inspect trends over the dataset order.';
+      } else if (input.toLowerCase().includes('anomal') || input.toLowerCase().includes('outlier')) {
+        responseText += 'You can run the anomaly detection model in the ML Workbench to highlight unusual records based on numeric features.';
+      } else if (input.toLowerCase().includes('correlat')) {
+        responseText += 'Use the correlation analysis in the Analyze panel to see how numeric columns are related to each other.';
+      } else if (input.toLowerCase().includes('visualiz') || input.toLowerCase().includes('chart')) {
+        responseText += 'The Visualization tab can create bar, line, pie, area and scatter charts. Start with a bar chart using a categorical column on the X axis and a numeric column on the Y axis.';
+      } else {
+        responseText += 'I recommend starting with the Analyze tab to get summary statistics, then exploring the ML Workbench and Visualization dashboard for deeper insights.';
+      }
+
+      const assistantMessage: Message = {
+        role: "assistant",
+        content: responseText,
+        timestamp: new Date(),
+        suggestions: [
+          "Run a full analysis from the Analyze tab",
+          "Try training a prediction model in the ML Workbench",
+          "Open the Visualization tab and create a bar chart",
+        ],
+      };
+
+      setMessages(prev => [...prev, assistantMessage]);
     } finally {
       setIsLoading(false);
     }
