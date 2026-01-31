@@ -19,6 +19,10 @@ from services.data_analysis_service import DataAnalysisService
 from services.ml_models_service import MLModelsService
 from services.ai_insights_service import AIInsightsService
 from services.forecasting_service import ForecastingService
+from services.nlp_engine import NLPEngine
+from services.analysis_engine import AnalysisEngine
+from services.ml_workbench import MLWorkbench
+from services.ai_data_analyzer import AIDataAnalyzer
 
 # MongoDB connection (used by routers; client is initialized on import)
 _mongodb_uri = os.environ.get("MONGODB_URI") or os.environ.get("MONGO_URL")
@@ -34,9 +38,14 @@ analysis_router = APIRouter(prefix="/api/analyze", tags=["Analysis"])
 ml_router = APIRouter(prefix="/api/ml", tags=["Machine Learning"])
 ai_router = APIRouter(prefix="/api/ai", tags=["AI Insights"])
 forecast_router = APIRouter(prefix="/api/forecast", tags=["Forecasting"])
+advanced_router = APIRouter(prefix="/api/advanced", tags=["Advanced AI/ML"])
 
 # Initialize services
 ai_service = AIInsightsService()
+nlp_engine = NLPEngine()
+analysis_engine = AnalysisEngine()
+ml_workbench = MLWorkbench()
+ai_analyzer = AIDataAnalyzer()
 
 # Configure logging
 logging.basicConfig(
@@ -139,6 +148,60 @@ class MultiForecastRequest(BaseModel):
     data: List[Dict[str, Any]]
     columns: List[str]
     periods: int = 10
+
+
+# ============== Advanced AI/ML Models ==============
+
+class SmartAnalyzeRequest(BaseModel):
+    data: List[Dict[str, Any]]
+    query: Optional[str] = None
+    analysis_type: str = "auto"
+    options: Optional[Dict[str, Any]] = None
+
+class SmartQueryRequest(BaseModel):
+    data: List[Dict[str, Any]]
+    query: str
+    conversation_history: Optional[List[Dict[str, str]]] = None
+
+class DataQualityRequest(BaseModel):
+    data: List[Dict[str, Any]]
+    custom_rules: Optional[Dict[str, Any]] = None
+
+class PatternDetectionRequest(BaseModel):
+    data: List[Dict[str, Any]]
+    columns: Optional[List[str]] = None
+
+class TrendAnalysisRequest(BaseModel):
+    data: List[Dict[str, Any]]
+    value_column: str
+    time_column: Optional[str] = None
+
+class AutoMLRequest(BaseModel):
+    data: List[Dict[str, Any]]
+    target_column: str
+    feature_columns: Optional[List[str]] = None
+    problem_type: str = "auto"
+    cv_folds: int = 5
+
+class FeatureEngineeringRequest(BaseModel):
+    data: List[Dict[str, Any]]
+    target_column: Optional[str] = None
+    create_interactions: bool = True
+    create_polynomials: bool = True
+
+class EnsembleRequest(BaseModel):
+    data: List[Dict[str, Any]]
+    target_column: str
+    feature_columns: Optional[List[str]] = None
+    n_models: int = 3
+
+class NLPAnalyzeRequest(BaseModel):
+    query: str
+
+class ReportRequest(BaseModel):
+    data: List[Dict[str, Any]]
+    report_type: str = "comprehensive"
+    include_visualizations: bool = True
 
 
 # ============== Base Endpoints ==============
@@ -381,6 +444,173 @@ async def forecast_multiple(request: MultiForecastRequest):
     except Exception as e:
         logger.error(f"Multi-column forecast error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============== Advanced AI/ML Endpoints ==============
+
+@advanced_router.post("/analyze")
+async def smart_analyze(request: SmartAnalyzeRequest):
+    """Intelligent data analysis with automatic approach selection."""
+    try:
+        result = await ai_analyzer.analyze(
+            data=request.data,
+            query=request.query,
+            analysis_type=request.analysis_type,
+            options=request.options
+        )
+        if not result.get("success"):
+            raise HTTPException(status_code=400, detail=result.get("error"))
+        return result
+    except Exception as e:
+        logger.error(f"Smart analyze error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@advanced_router.post("/query")
+async def smart_query(request: SmartQueryRequest):
+    """Answer natural language questions about data."""
+    try:
+        result = await ai_analyzer.smart_query(
+            data=request.data,
+            query=request.query,
+            conversation_history=request.conversation_history
+        )
+        if not result.get("success"):
+            raise HTTPException(status_code=400, detail=result.get("error"))
+        return result
+    except Exception as e:
+        logger.error(f"Smart query error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@advanced_router.post("/quality")
+async def assess_data_quality(request: DataQualityRequest):
+    """Comprehensive data quality assessment."""
+    try:
+        result = analysis_engine.comprehensive_data_quality_assessment(
+            data=request.data,
+            custom_rules=request.custom_rules
+        )
+        if not result.get("success"):
+            raise HTTPException(status_code=400, detail=result.get("error"))
+        return result
+    except Exception as e:
+        logger.error(f"Quality assessment error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@advanced_router.post("/patterns")
+async def detect_patterns(request: PatternDetectionRequest):
+    """Detect patterns in data."""
+    try:
+        result = analysis_engine.detect_patterns(
+            data=request.data,
+            columns=request.columns
+        )
+        if not result.get("success"):
+            raise HTTPException(status_code=400, detail=result.get("error"))
+        return result
+    except Exception as e:
+        logger.error(f"Pattern detection error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@advanced_router.post("/trends")
+async def analyze_trends(request: TrendAnalysisRequest):
+    """Advanced trend analysis with change point detection."""
+    try:
+        result = analysis_engine.advanced_trend_analysis(
+            data=request.data,
+            value_column=request.value_column,
+            time_column=request.time_column
+        )
+        if not result.get("success"):
+            raise HTTPException(status_code=400, detail=result.get("error"))
+        return result
+    except Exception as e:
+        logger.error(f"Trend analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@advanced_router.post("/automl")
+async def run_automl(request: AutoMLRequest):
+    """Run AutoML pipeline with model selection and comparison."""
+    try:
+        result = ml_workbench.auto_ml_pipeline(
+            data=request.data,
+            target_column=request.target_column,
+            feature_columns=request.feature_columns,
+            problem_type=request.problem_type,
+            cv_folds=request.cv_folds
+        )
+        if not result.get("success"):
+            raise HTTPException(status_code=400, detail=result.get("error"))
+        return result
+    except Exception as e:
+        logger.error(f"AutoML error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@advanced_router.post("/features")
+async def engineer_features(request: FeatureEngineeringRequest):
+    """Intelligent feature engineering."""
+    try:
+        result = ml_workbench.intelligent_feature_engineering(
+            data=request.data,
+            target_column=request.target_column,
+            create_interactions=request.create_interactions,
+            create_polynomials=request.create_polynomials
+        )
+        if not result.get("success"):
+            raise HTTPException(status_code=400, detail=result.get("error"))
+        return result
+    except Exception as e:
+        logger.error(f"Feature engineering error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@advanced_router.post("/ensemble")
+async def create_ensemble(request: EnsembleRequest):
+    """Create ensemble prediction model."""
+    try:
+        result = ml_workbench.ensemble_prediction(
+            data=request.data,
+            target_column=request.target_column,
+            feature_columns=request.feature_columns,
+            n_models=request.n_models
+        )
+        if not result.get("success"):
+            raise HTTPException(status_code=400, detail=result.get("error"))
+        return result
+    except Exception as e:
+        logger.error(f"Ensemble error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@advanced_router.post("/nlp/analyze")
+async def analyze_nlp(request: NLPAnalyzeRequest):
+    """Analyze natural language query."""
+    try:
+        result = nlp_engine.analyze_query(request.query)
+        if not result.get("success"):
+            raise HTTPException(status_code=400, detail=result.get("error"))
+        return result
+    except Exception as e:
+        logger.error(f"NLP analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@advanced_router.post("/report")
+async def generate_report(request: ReportRequest):
+    """Generate comprehensive analysis report."""
+    try:
+        result = await ai_analyzer.generate_report(
+            data=request.data,
+            report_type=request.report_type,
+            include_visualizations=request.include_visualizations
+        )
+        if not result.get("success"):
+            raise HTTPException(status_code=400, detail=result.get("error"))
+        return result
+    except Exception as e:
+        logger.error(f"Report generation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@advanced_router.get("/capabilities")
+async def get_capabilities():
+    """Get available analysis capabilities."""
+    return ai_analyzer.get_analysis_capabilities()
 
 
 # ============== Shutdown Helper ==============

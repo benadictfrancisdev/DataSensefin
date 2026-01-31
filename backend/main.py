@@ -19,6 +19,7 @@ from server import (
     ai_router,
     forecast_router,
     ml_router,
+    advanced_router,
     db,
     shutdown_db_client,
 )
@@ -75,6 +76,7 @@ app.include_router(analysis_router)
 app.include_router(ml_router)
 app.include_router(ai_router)
 app.include_router(forecast_router)
+app.include_router(advanced_router)
 
 
 # ---------------------------------------------------------------------------
