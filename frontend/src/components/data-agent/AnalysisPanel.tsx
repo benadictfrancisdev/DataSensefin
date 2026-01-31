@@ -26,18 +26,83 @@ const AnalysisPanel = ({ dataset }: AnalysisPanelProps) => {
     setIsAnalyzing(true);
     try {
       const dataToAnalyze = dataset.cleanedData || dataset.rawData;
-      const { data, error } = await supabase.functions.invoke('data-agent', {
-        body: { 
-          action: 'analyze', 
-          data: dataToAnalyze.slice(0, 500), // Limit for AI processing
-          datasetName: dataset.name 
+
+      // Pure frontend statistical summary (no Supabase, no LLM)
+      const numericColumns = dataset.columns.filter(col => 
+        dataToAnalyze.some(row => !isNaN(Number(row[col])))
+      );
+
+      const statistics: Record<string, unknown> = {};
+      const insights: AnalysisResult["insights"] = [];
+      const patterns: AnalysisResult["patterns"] = [];
+      const recommendations: AnalysisResult["recommendations"] = [];
+
+      numericColumns.forEach(col => {
+        const values = dataToAnalyze
+          .map(row => Number(row[col]))
+          .filter(v => !isNaN(v));
+
+        if (values.length === 0) return;
+
+        const sum = values.reduce((a, b) => a + b, 0);
+        const avg = sum / values.length;
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        const sorted = [...values].sort((a, b) => a - b);
+        const median = sorted.length % 2 === 0
+          ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
+          : sorted[Math.floor(sorted.length / 2)];
+
+        statistics[col] = {
+          count: values.length,
+          mean: avg,
+          min,
+          max,
+          median,
+        };
+
+        // Simple insight rules
+        const range = max - min;
+        if (range > 0 && avg > min + range * 0.7) {
+          insights.push({
+            title: `${col} is skewed towards higher values`,
+            description: `${col} has an average of ${avg.toFixed(2)} with a range from ${min.toFixed(2)} to ${max.toFixed(2)}. This suggests concentrations at the higher end.`,
+            importance: "medium",
+          });
         }
+
+        patterns.push({
+          name: `${col} distribution`,
+          description: `Values for ${col} range from ${min.toFixed(2)} to ${max.toFixed(2)} with a median of ${median.toFixed(2)}.`,
+        });
       });
 
-      if (error) throw error;
-      setAnalysis(data);
+      if (numericColumns.length > 1) {
+        recommendations.push({
+          action: "Explore correlations between key numeric variables",
+          reason: `You have ${numericColumns.length} numeric columns. Consider checking for correlations and building predictive models based on the most important ones.`,
+        });
+      } else {
+        recommendations.push({
+          action: "Add or engineer numeric features",
+          reason: "Machine learning and advanced analytics work best with at least one or two meaningful numeric variables.",
+        });
+      }
+
+      const summary = `Analysis completed for ${dataset.name} with ${dataToAnalyze.length} records and ${dataset.columns.length} columns. ${numericColumns.length} numeric columns were profiled for basic statistics and patterns.`;
+
+      const localAnalysis: AnalysisResult = {
+        summary,
+        statistics,
+        insights,
+        patterns,
+        recommendations,
+      };
+
+      setAnalysis(localAnalysis);
       toast.success("Analysis complete!");
     } catch (error) {
+      console.error("Local analysis error:", error);
       toast.error(error instanceof Error ? error.message : "Analysis failed");
     } finally {
       setIsAnalyzing(false);
